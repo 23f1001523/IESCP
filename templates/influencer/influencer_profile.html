@@ -1,0 +1,38 @@
+{% extends '/influencer/influencer_dashboard.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<!-- DIV FOR CONTAINING THE PROFILE PAGE -->
+<div class="row justify-content-center">
+<div class="col-md-6">
+  <!-- FORM FOR INFLUENCER PROFILE -->
+  <h1 class="mb-3 mt-3 text-center bg-dark text-white">Profile</h1>
+  <form action="/influencer/profile" method="POST">
+    <div class="form-floating mb-3 mt-3">
+      <input type="text" class="form-control" id="influencer_id" placeholder="Enter User ID" name="influencer_id" required>
+      <label for="influencer_id">User ID</label>
+
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" class="form-control" id="influencer_password" placeholder="Enter Password" name="influencer_password" required>
+      <label for="influencer_password">Password</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="password" class="form-control" id="new_password" placeholder="Enter Password" name="new_password" required>
+      <label for="new_password">New Password</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="password" class="form-control" id="confirm_new_password" placeholder="Enter Password" name="confirm_new_password" required>
+      <label for="confirm_new_password">Confirm New Password</label>
+    </div>
+
+     <div class='text-center m-3'>
+        <input type="submit"  value="Change Password" class="btn btn-dark mt-3 justify-content-center">
+      </div> 
+   </form>
+</div>
+</div>
+
+{% endblock %}

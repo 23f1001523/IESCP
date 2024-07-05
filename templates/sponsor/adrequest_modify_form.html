@@ -1,0 +1,39 @@
+{% extends '/sponsor/sponsor_dashboard.html' %}
+
+{% block title %} Sponsor AdRequest {% endblock %}
+
+{% block content %}
+
+
+
+<div class="row justify-content-center mt-2">
+  <div class="col-md-6 bg-light border border-dark rounded p-2">
+
+      <h3 class='text-center mb-3'>Ad Request</h3>
+      <form  action='/sponsor/adrequest/modify/{{adrequests.adrequest_id}}' method='POST'>
+        <div  class="form-floating mb-3">
+          <input type="number" class="form-control" id="adrequest_id" name='adrequest_id' value="{{adrequests.adrequest_id}}" disabled>
+          <label for="adrequest_id" class="form-label text-dark" >AdRequest Id</label>
+        </div>
+        <div  class="form-floating mb-3">
+          <input type="text" class="form-control" id="message" name='message' value="{{adrequests.message}}" >
+          <label for="message" class="form-label text-dark">Message</label>
+        </div>
+
+        <div  class="form-floating mb-3">
+          <input type="text" class="form-control" id="requirements" name='requirements' value="{{adrequests.requirements}}">
+          <label for="requirements" class="form-label text-dark">Requirements</label>
+        </div>
+        <div  class="form-floating mb-3">
+          <input type="number" class="form-control" id="payment_amount" name='payment_amount' value='{{adrequests.payment_amount}}'>
+          <label for="payment_amount" class="form-label text-dark">Payment Amount</label>
+        </div>
+        <div  class="form-floating mb-3">
+          <input type="text" class="form-control" id="negotiation" name='negotiation' value='{{adrequests.negotiation}}' disabled>
+          <label for="negotiation" class="form-label text-dark">Negotiation</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+  </div>
+</div>
+{% endblock %}

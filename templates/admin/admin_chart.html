@@ -1,0 +1,75 @@
+{% extends '/admin/admin_dashboard.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div class="row">
+  <div class="col-md-6">
+    <canvas height="100px" width="200px" id="data_chart"></canvas>
+    <button onclick="fetchChart()">Fetch Chart</button>
+  </div>
+  <div class="col-md-6">
+    <canvas height="100px" width="200px" id="myChart"></canvas>
+  </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function fetchChart(){
+    fetch('/admin/fetchChart')
+    .then((response)=>{
+      return response.json();
+    })
+    .then((mydata)=>{
+      console.log(mydata);
+
+      const ctx = document.getElementById('data_chart');
+          new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels:mydata.map(item=>item.users),
+            datasets: [{
+              label: 'no of Users',
+              data: mydata.map(item=>item.value),
+              borderWidth: 1,
+              backgroundColor:['red','blue']
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+    })
+  }
+   const ctx = document.getElementById('myChart');
+   let datalabels= JSON.parse({{dlabels|tojson}});
+   let datavalues=JSON.parse({{data_values|tojson}});
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels:datalabels,
+      datasets: [{
+        label: 'no of Users',
+        data: datavalues,
+        borderWidth: 1,
+        backgroundColor:['red','blue']
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+{% endblock %}
