@@ -67,24 +67,6 @@ def influencerdashboard():
   return render_template('/influencer/influencer_dashboard.html')
 
 
-#INFLUENCER CAMPAIGN PROGRESS CHART ON INFLUENCER DASHBOARD
-@app.route('/influencer/campaign/progress/chart')
-def inluencercampaignprogresschart():
-  campaigns=Campaign.query.all()
-  for campaign in campaigns:
-    start_date=campaign.start_date.split('-')
-    end_date=campaign.end_date.split('-')
-    # return start_date
-    starting_date=datetime(int(start_date[0]),int(start_date[1]),int(start_date[2]))
-    ending_date=datetime(int(end_date[0]),int(end_date[1]),int(end_date[2]))
-    campaign_duration=(ending_date-starting_date).days
-    present_date=datetime.now()
-    campaign_progress=(present_date-starting_date).days
-    days_left=(ending_date-present_date).days
-    percentage_progress=(campaign_progress/campaign_duration)*100
-    present_year=datetime.now().year
-    # return str(percentage_progress)
-  return render_template('/influencer/influencer_dashboard.html')
 
 
 #INFLUENCER PROFILE
@@ -185,18 +167,19 @@ def influencer_campaign_search():
 # ADREQUEST SEARCH OPTION ON INFLUENCER FIND
 @app.route("/influencer/adrequest/search", methods=['GET', 'POST'])
 def influencer_adrequest_search():
-  
+
   if request.method == 'POST':
     adrequest_search_type = request.form.get('adrequest_search_type')
     adrequest_search = request.form.get('adrequest_search')
-    
+
     if adrequest_search_type == 'payment_amount':
 
-      adds=[]
-      adrequests=AdRequest.query.filter_by(payment_amount=adrequest_search).all()
+      adds = []
+      adrequests = AdRequest.query.filter_by(
+          payment_amount=adrequest_search).all()
       for ads in adrequests:
-        camp=Campaign.query.filter_by(campaign_id=ads.campaign_id).first()
-        if camp.visibility=='Public':
+        camp = Campaign.query.filter_by(campaign_id=ads.campaign_id).first()
+        if camp.visibility == 'Public':
           adds.append(ads)
       return render_template('/influencer/influencer_find.html',
                              adrequests=adds)
@@ -206,8 +189,46 @@ def influencer_adrequest_search():
 #INFLUENCER STATS
 @app.route('/influencer/stats')
 def influencer_stats():
-  
   return render_template('/influencer/influencer_stats.html')
+
+
+#INFLUENCER CAMPAIGN PROGRESS CHART ON INFLUENCER STATS
+@app.route('/influencer/campaign/progress/chart')
+def inluencercampaignprogresschart():
+  campaigns = Campaign.query.all()
+  data=[]
+  for campaign in campaigns:
+    dict = {}
+    start_date = campaign.start_date.split('-')
+    end_date = campaign.end_date.split('-')
+    starting_date = datetime(int(start_date[0]), int(start_date[1]),
+                             int(start_date[2]))
+    ending_date = datetime(int(end_date[0]), int(end_date[1]),
+                           int(end_date[2]))
+    campaign_duration = (ending_date - starting_date).days
+   
+    present_date = datetime.now()
+    campaign_progress = (present_date - starting_date).days
+    present_date=str(present_date)
+    current_date = present_date.split('-')
+   
+    
+    if int(current_date[0]) < int(start_date[0]):
+      percentage_progress = 0
+    elif int(current_date[0]) > int(end_date[0]):
+      percentage_progress = campaign_duration
+    else:
+      percentage_progress = (campaign_progress / campaign_duration) * 100
+    
+    dict = {
+        "id": campaign.campaign_id,
+        "name": campaign.name,
+        "progress": percentage_progress
+    }
+    data.append(dict)
+  return data
+
+
 
 
 #INFLUENCER LOGOUT

@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, url_for, session, flash
+from flask import Flask, render_template, request, url_for, session, flash,jsonify
 from werkzeug.utils import redirect
-
+from datetime import datetime
 from models.model import Sponsor, db, Influencer, Admin, Campaign, AdRequest
 from flask import current_app as app
 from controllers.usermanager import userlogin, login_required, userlogout
+from sqlalchemy import func
 
 
-# sponsor register
+# SPONSOR REGISTER
 @app.route('/sponsor/register', methods=['GET', 'POST'])
 def sponsorregister():
   if request.method == 'POST':
@@ -110,9 +111,10 @@ def sponsor_profile():
 # SPONSOR CAMPAIGN SHOW
 @app.route('/sponsor/campaign/show')
 def show_campaign():
-  campaigns = Campaign.query.all()
-  adrequests = AdRequest.query.all()
   user_id = session['user_id']
+  campaigns = Campaign.query.filter_by(sponsor_id=user_id).all()
+  adrequests = AdRequest.query.all()
+
   return render_template('/sponsor/campaign.html',
                          campaigns=campaigns,
                          adrequests=adrequests,
@@ -213,7 +215,6 @@ def modify_campaign(id):
                          campaigns=campaigns)
 
 
-
 # ADREQUEST EDIT BUTTON ON ADREQUEST TABLE
 @app.route('/sponsor/adrequest/modify/<id>', methods=['GET', 'POST'])
 def modify_adrequest(id):
@@ -224,14 +225,14 @@ def modify_adrequest(id):
     requirements = request.form.get('requirements')
     payment_amount = request.form.get('payment_amount')
     negotiation = request.form.get('negotiation')
-    adrequest.message=message
-    adrequest.requirements=requirements
-    adrequest.payment_amount=payment_amount
-    
+    adrequest.message = message
+    adrequest.requirements = requirements
+    adrequest.payment_amount = payment_amount
 
     db.session.commit()
     return redirect(url_for('show_campaign'))
-  return render_template('/sponsor/adrequest_modify_form.html',adrequests=adrequest)
+  return render_template('/sponsor/adrequest_modify_form.html',
+                         adrequests=adrequest)
 
 
 # SPONSOR FIND
@@ -316,6 +317,75 @@ def sponsor_adrequest_search():
       return render_template('/sponsor/sponsor_find.html',
                              adrequests=adrequests)
   return render_template('/sponsor/sponsor_find.html')
+
+
+#SPONSOR STATS
+@app.route('/sponsor/stats')
+def sponsor_stats():
+  return render_template('/sponsor/sponsor_stats.html')
+
+
+#SPONSOR CAMPAIGN PROGRESS CHART ON SPONSOR STATS
+@app.route('/sponsor/campaign/progress/chart')
+def sponsorcampaignprogresschart():
+  id = session['user_id']
+  sponsors = Sponsor.query.filter_by(sponsor_id=id).first()
+  validCampaigns = sponsors.campaigns
+  data = []
+  for campaign in validCampaigns:
+    dict = {}
+    start_date = campaign.start_date.split('-')
+    end_date = campaign.end_date.split('-')
+    starting_date = datetime(int(start_date[0]), int(start_date[1]),
+                             int(start_date[2]))
+    ending_date = datetime(int(end_date[0]), int(end_date[1]),
+                           int(end_date[2]))
+    campaign_duration = (ending_date - starting_date).days
+
+    present_date = datetime.now()
+    campaign_progress = (present_date - starting_date).days
+    present_date = str(present_date)
+    current_date = present_date.split('-')
+
+    if int(current_date[0]) < int(start_date[0]):
+      percentage_progress = 0
+    elif int(current_date[0]) > int(end_date[0]):
+      percentage_progress = campaign_duration
+    else:
+      percentage_progress = (campaign_progress / campaign_duration) * 100
+
+    dict = {
+        "id": campaign.campaign_id,
+        "name": campaign.name,
+        "progress": percentage_progress
+    }
+    data.append(dict)
+  return data
+
+
+@app.route('/sponsor/influencer/niche/chart')
+def influencerNicheCount():
+  data = []
+  dict={}
+  query = db.session.query(
+      Influencer.niche,
+      func.count(Influencer.niche).label('count')
+  ).group_by(Influencer.niche)
+  # query = Influencer.query(func.count(niche).label('count').group_by(
+  #                           niche))
+  for niche, count in query:
+    dict = {
+        'name': niche,
+        'count': count
+    }
+    data.append(dict)
+  # for i in query:
+  #   dict['name']=i[0]
+  #   dict['count']=i[1]
+  #   data.append(dict)
+  return jsonify(data)
+  # data = [{'name': 'gym', 'count': 1}, {'name': 'beauty', 'count': 2}]
+  # return data
 
 
 #SPONSOR LOGOUT
