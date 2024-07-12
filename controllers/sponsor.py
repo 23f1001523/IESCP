@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, session, flash,jsonify
+from flask import Flask, render_template, request, url_for, session, flash, jsonify
 from werkzeug.utils import redirect
 from datetime import datetime
 from models.model import Sponsor, db, Influencer, Admin, Campaign, AdRequest
@@ -219,6 +219,7 @@ def modify_campaign(id):
 @app.route('/sponsor/adrequest/modify/<id>', methods=['GET', 'POST'])
 def modify_adrequest(id):
   adrequest = AdRequest.query.filter_by(adrequest_id=id).first()
+  influencers = Influencer.query.all()
   if request.method == 'POST':
     adrequest_id = request.form.get('adrequest_id')
     message = request.form.get('message')
@@ -233,6 +234,22 @@ def modify_adrequest(id):
     return redirect(url_for('show_campaign'))
   return render_template('/sponsor/adrequest_modify_form.html',
                          adrequests=adrequest)
+
+
+#SEND BUTTON ON PRIVATE ADREQUESTS
+@app.route('/sponsor/send/adrequest/<id>',methods=['GET','POST'])
+def send_request(id):
+  if request.method=='POST':
+    adrequests=AdRequest.query.filter_by(adrequest_id=id).first()
+    influencer_id = request.form.get('influencer_id')
+    adrequests.influencer_id=influencer_id
+    db.session.commit()
+    return redirect(url_for('show_campaign'))
+  influencers = Influencer.query.all()
+  adrequests = AdRequest.query.filter_by(adrequest_id=id).first()
+  return render_template('/sponsor/send_adrequest.html',
+                         adrequests=adrequests,
+                         influencers=influencers)
 
 
 # SPONSOR FIND
@@ -366,18 +383,14 @@ def sponsorcampaignprogresschart():
 @app.route('/sponsor/influencer/niche/chart')
 def influencerNicheCount():
   data = []
-  dict={}
+  dict = {}
   query = db.session.query(
       Influencer.niche,
-      func.count(Influencer.niche).label('count')
-  ).group_by(Influencer.niche)
+      func.count(Influencer.niche).label('count')).group_by(Influencer.niche)
   # query = Influencer.query(func.count(niche).label('count').group_by(
   #                           niche))
   for niche, count in query:
-    dict = {
-        'name': niche,
-        'count': count
-    }
+    dict = {'name': niche, 'count': count}
     data.append(dict)
   # for i in query:
   #   dict['name']=i[0]

@@ -1,0 +1,79 @@
+{% extends '/influencer/influencer_dashboard.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div>
+  {% if adrequests %}
+   <h2 class='text-secondary text-center mt-3'><u>Recieved Ad Requests</u></h2>
+   <table class='table table-responsive'>
+     <thead class='bg-dark text-white'>
+     <tr>
+       <th>Sr</th>
+       <th>Campaign Id</th>
+       <th>Message</th>
+       <th>Requirements</th>
+       <th>Payment Amount</th>
+       <th>Status</th>
+       <th>Negotiation</th>
+        <th colspan=3></th>
+     </tr></thead>
+     {% for adrequest in adrequests %}
+
+     <tr>
+       <td>{{loop.index}}</td>
+       <td>{{ adrequest.campaign_id  }}</td>
+     <td>{{ adrequest.message  }}</td>
+       <td>{{ adrequest.requirements   }}</td>
+       <td>{{ adrequest.payment_amount  }}</td>
+       <td>{{ adrequest.status }}</td>
+       <td>{{adrequest.negotiation}}</td>
+       <td>
+
+         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#negotiate" onclick='fetchId("{{adrequest.adrequest_id}}")'>
+         <i class="bi bi-search"></i>Negotiate
+         </button>
+         <!-- <a type="button" href='#' class="btn btn-warning">Negotiate</a></td> -->
+       <td><a type="button" href='#' class="btn btn-info">Accept</a></td>
+       <td><a type="button" href='#' class="btn btn-danger">Reject</a></td>
+     </tr>
+     {% endfor %}
+   </table>
+   {% endif %}
+</div>
+
+<div class="modal fade" id="negotiate" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-5" id="searchModalLabel">Negotiation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form  action='/influencer/adrequest/negotiation/{{id}}' method='POST'>
+          <div  class="form-floating mb-1">
+              <input type="text" class="form-control" id="negotiate">
+            </div>
+          
+          
+        <div  class="form-floating mb-1">
+          <input type="text" class="form-control" id="negotiation" name='negotiation'>
+          <label for="negotiation" class="form-label text-dark">Negotiate</label></div>
+        </div>
+        </form>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function fetchId(id){
+   
+    const inputbox=document.getElemntById("negotiate");
+    inputbox.value=id;
+     alert('You have selected the adrequest '+id);
+  }
+</script>
+{% endblock %}

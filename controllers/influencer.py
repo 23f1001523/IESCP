@@ -64,10 +64,21 @@ def influencer_login():
 #INFLUENCER DASHBOARD
 @app.route('/influencer/dashboard')
 def influencerdashboard():
-  return render_template('/influencer/influencer_dashboard.html')
+  id=session['user_id']
+  adrequests=AdRequest.query.filter_by(influencer_id=id).all()
+  return render_template('/influencer/influencer_dashboard_display.html',adrequests=adrequests)
 
 
-
+@app.route('/influencer/adrequest/negotiation/<id>',methods=['GET', 'POST'])
+def negotiation():
+  if request.method == 'POST':
+    adrequest_id = request.form.get('adrequest_id')
+    negotiation = request.form.get('negotiation')
+    adrequest = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
+    adrequest.negotiation = negotiation  
+    db.session.commit()
+    
+    
 
 #INFLUENCER PROFILE
 @app.route('/influencer/profile', methods=['GET', 'POST'])

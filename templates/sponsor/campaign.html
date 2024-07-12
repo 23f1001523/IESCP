@@ -63,7 +63,7 @@
          <td><a type="button" href='/admin/campaign/flag' class="btn btn-danger">Reject</a></td>
          <td><a type="button" href='/sponsor/adrequest/modify/{{adrequest.adrequest_id}}' class="btn btn-dark">Edit</a></td>
          {% if campaign.visibility=='Private' %}
-         <td><a type="button" href='/admin/campaign/flag' class="btn btn-secondary">Send</a>
+         <td><a type="button" href='/sponsor/send/adrequest/{{adrequest.adrequest_id}}' class="btn btn-secondary">Send</a>
          </td>{% endif %}
        </tr>
        {% endfor %}
