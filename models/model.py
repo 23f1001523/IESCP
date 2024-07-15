@@ -123,3 +123,6 @@ class AdRequest(db.Model):
     self.status = status
     self.campaign_id = campaign_id
     self.negotiation=negotiation
+
+
+  
