@@ -28,8 +28,9 @@
           <label for="status" class="form-label text-dark">Status</label>
         </div>
         
+        
         <div  class="form-floating mb-1">
-          <input type="text" class="form-control" id="negotiation" name='negotiation' value="{{adrequests.negotiation}}">
+          <input type="text" class="form-control" id="negotiation" name='negotiation' value="{{adrequests.negotiation}}" disabled>
           <label for="negotiation" class="form-label text-dark">Negotiation</label>
         </div>
         <div class='row'>
@@ -90,24 +91,26 @@
                <td>{{ influencer.niche }}</td>
                <td>{{ influencer.reach }}</td>
                <td>{{influencer.status}}</td>
-               <td><a type="button" onclick='showAlert("{{influencer.influencer_id}}")' class="btn btn-danger">Select</a></td>
+               <td><a type="button" onclick='showAlert("{{influencer.influencer_id}}")' class="btn btn-success" data-bs-dismiss="modal">Select</a></td>
              </tr>
              {% endfor %}
            </table>
            {% endif %}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
   </div>
 </div>
 <script>
   function showAlert(id){
-    alert('You have selected the influencer '+id);
+    // alert('You have selected the influencer '+id);
     const influencer_id=document.getElementById('influencer_id')
     influencer_id.value=id;
+    
+    
   }
 </script>
 {% endblock %}

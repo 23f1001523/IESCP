@@ -66,6 +66,8 @@
       <select class="form-select" aria-label="Default select example" name="adrequest_search_type">
         <option selected>Select Search Type</option>
         <option value="payment_amount">By Payment Amount</option>
+        <option value="message">By Message</option>
+        <option value="requirements">By Requirements</option>
       </select>
       <label for="sponsor_search" class="form-label"></label>
       <input class="form-control" list="datalistOptions" id="sponsor_search" name="adrequest_search"placeholder="Type to search...">
@@ -182,4 +184,7 @@
            {% endif %}
       </div>
    </div>
+<div class='text-center m-3'>
+<a type="button" href='/sponsor/dashboard' class="btn btn-danger text-white">Back</a>
+  </div>
   {% endblock %}

@@ -7,7 +7,12 @@
 <div class="row justify-content-center mt-2">
   <div class="col-md-6 bg-light border border-dark rounded p-2">
 
-      <h3 class='text-center mb-3'>Camapign</h3>
+      <h3 class='text-center mb-3'>Campaign</h3>
+   
+     
+     <h5 class='text-center mb-3 text-danger'>Sponsor Budget : {{sponsors.budget}}</h5>
+      <h5 class='text-center mb-3 text-danger'>Budget Spent : {{total_budget}} </h5>
+    
       <form  action='/sponsor/campaign' method='POST'>
         
 
@@ -16,7 +21,7 @@
           <label for="campaign_name" class="form-label text-dark">Campaign Name</label>
         </div>
         <div  class="form-floating mb-1">
-          <input type="text" class="form-control" id="description" name='description'>
+          <textarea type="text" class="form-control" id="description" name='description'></textarea>
           <label for="description" class="form-label text-dark">Description</label>
         </div>
         <div  class="form-floating mb-1">
@@ -39,11 +44,14 @@
           </select>
         </div>
         <div  class="form-floating mb-1">
-          <input type="text" class="form-control" id="goals" name='goals'>
+          <textarea type="text" class="form-control" id="goals" name='goals'></textarea>
           <label for="goals" class="form-label text-dark">Goals</label>
         </div>
-      
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a type="button" href='/sponsor/campaign/show' class="btn btn-danger text-white">Back</a>
+        </div>
+
       </form>
   </div>
 </div>

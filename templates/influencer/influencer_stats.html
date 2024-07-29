@@ -7,13 +7,38 @@
 <div class="row justify-content-center ">
   
    <div class="col-md-6">
-     <canvas id="campaignProgressChart" class='mt-5 justify-content-center'></canvas>
-    
+     <div class="card">
+       <div class="card-header">
+          <h3>Campaign Progress</h3>
+       </div>
+       <div class="card-body">
+         <canvas id="campaignProgressChart" class='mt-5 justify-content-center'></canvas>
+       </div>
+     </div>
 </div>
+   <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                 <h3>Campaign Progress</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="campaignBudgetChart" class='mt-5 justify-content-center'></canvas>
+              </div>
+            </div>
+       </div>
+     
+       
+
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
-  window.onload=campaignProgress();
+  window.onload=loadFunctions();
+
+  function loadFunctions(){
+    campaignProgress();
+    campaignBudget();
+  }
 
   function campaignProgress(){
     fetch('/influencer/campaign/progress/chart')
@@ -36,10 +61,9 @@
             label: '# of Campaign Progress',
             data: values,
             borderWidth: 1,
-            backgroundColor: [
-               'red',
-                'blue'
-            ]
+            backgroundColor:['rgba(255, 205, 86, 0.7)','rgba(153, 102, 255, 0.7)','rgba(255, 99, 132, 0.7)',
+            'rgba(75, 192, 192, 0.7)']
+        
           }],
         },
         options: {
@@ -68,8 +92,61 @@
       });
     })
   }
-</script>
 
+  function campaignBudget(){
+    fetch('/influencer/adrequests/budget/chart')
+    .then((response)=>{
+      return response.json();
+    })
+    .then((data)=>{
+      console.log(data);
+      const ctx = document.getElementById('campaignBudgetChart');
+      const labels=data.map(item=>item.name)
+      const values=data.map(item=>item.budget)
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            barpercentage:0.5,
+            barThickness: 30,
+            label: '# of Campaign Progress',
+            data: values,
+            borderWidth: 1,
+            backgroundColor:['rgba(255, 205, 86, 0.7)','rgba(153, 102, 255, 0.7)','rgba(255, 99, 132, 0.7)',
+            'rgba(75, 192, 192, 0.7)']
+
+          }],
+        },
+        options: {
+          plugins: {
+              datalabels: {
+                  anchor: 'end',
+                  align: 'top',
+                  formatter: function(values) {
+                      return values + '%'; // Format the label as percentage
+                  }
+              }
+          },
+          scales: {
+            x: {
+              max:100,
+              beginAtZero: true,
+              ticks: {
+                  callback: function(values) {
+                      return values + '%'; // Append '%' to the tick values
+                  }
+              }
+            }
+          },
+          indexAxis: 'y'
+        }
+      });
+    })
+  }
+
+</script>
 
 {% endblock %}
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

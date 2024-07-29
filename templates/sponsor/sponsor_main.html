@@ -1,0 +1,121 @@
+{% extends '/sponsor/sponsor_dashboard.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div class='container mt-5'>
+<div class="card">
+  <div class="card-header bg-info text-white p-3">
+   <h4 class='text-center'>Sponsor Role</h4>
+  </div>
+  <div class="card-body p-3">
+     <form >
+          <ul class="list-group">
+            <li class="list-group-item" >Create an Account as a Sponsor</li>
+            <li class="list-group-item">Login to the Account</li>
+            <li class="list-group-item">Create a Campaign</li>
+            <li class="list-group-item">Create an Adrequest</li>
+            <li class="list-group-item">Send Requests to Influencers for private Campaigns</li>
+            <li class="list-group-item">Accept Requests from Influencers from Public Campaigns</li>
+            
+
+         
+            <li class="list-group-item">See Statistics of Campaigns and AdRequests</li>
+          </ul>
+       </form>
+  </div>
+  </div>
+</div>
+
+<!-- CAMPAIGN TABLE -->
+<!-- <div class="mt-1">
+    {% if campaigns %}
+     <h1 class='text-center text-secondary '><u>Campaigns</u></h1>
+     <table class='table'>
+       <thead class='bg-dark text-white'>
+       <tr>
+         <th>Sr</th>
+         <th>Campaign Id</th>
+         <th>Campaign Name</th>
+         <th>Description</th>
+         <th>Start Date</th>
+         <th>End Date</th>
+         <th>Budget</th>
+         <th>Visibility</th>
+         <th>Goals</th>
+         <th>Status</th>
+       </tr>
+       </thead>
+       {% for campaign in campaigns %}
+       <tr>
+         <td>{{loop.index}}</td>
+         <td>{{ campaign.campaign_id }}</td>
+         <td>{{ campaign.name }}</td>
+       <td>{{ campaign.description }}</td>
+         <td>{{ campaign.start_date }}</td>
+         <td>{{ campaign.end_date }}</td>
+         <td>{{ campaign.budget }}</td>
+         <td>{{ campaign.visibility }}</td>
+          <td>{{ campaign.goals }}</td>
+         <td>{{ campaign.status }}</td>
+
+       </tr>
+       {% endfor %}
+     </table>
+     {% endif %}
+</div> -->
+<!-- ADREQUESTS TABLE -->
+<!-- <div class="mt-1">
+    {% if adrequests %}
+     <h1 class='text-center text-secondary '><u>Ad Requests</u></h1>
+     <table class='table'>
+       <thead class='bg-dark text-white'>
+       <tr>
+         <th>Sr</th>
+         <th>Campaign Id</th>
+         <th>AdRequest Id</th>
+         <th>Message</th>
+         <th>Requirements</th>
+         <th>Payment_Amount</th>
+         <th>Status</th>
+       </tr>
+       </thead>
+       {% for adrequest in adrequests %}
+       <tr>
+         <td>{{loop.index}}</td>
+         <td>{{ adrequest.campaign_id }}</td>
+       <td>{{ adrequest.adrequest_id }}</td>
+         <td>{{ adrequest.message }}</td>
+         <td>{{ adrequest.requirements }}</td>
+         <td>{{ adrequest.payment_amount }}</td>
+         <td>{{ adrequest.status }}</td>
+
+       </tr>
+       {% endfor %}
+     </table>
+     {% endif %}
+</div>-->
+
+
+<!-- NEGOCIATION TABLE -->
+<!-- <div class="mt-1">
+    {% if negotiations %}
+     <h1 class='text-center text-secondary '><u>Negotiations</u></h1>
+     <table class='table'>
+       <thead class='bg-dark text-white'>
+       <tr>
+         <th>Negotiation</th>  
+       </tr>
+       </thead>
+       {% for negotiation in negotiations %}
+       <tr>
+         <td>{{ negotiation.negotiation }}</td>
+       </tr>
+       {% endfor %}
+     </table>
+     {% endif %} -->
+</div> 
+
+
+
+
+{% endblock %}

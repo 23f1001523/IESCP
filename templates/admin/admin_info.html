@@ -1,11 +1,13 @@
 {% extends '/admin/admin_dashboard.html' %}
 {% block title %} Admin Info {% endblock %}
 {% block content %}
-
+<div class='text-center'>
+ <a type="button" href='/admin/dashboard' class="btn btn-danger text-white mt-3">Back</a>
+  </div>
 <div class="container ">
 <div class="row justify-content-center mt-3">
   <div class="col bg-light ">
-  <div class="mt-5 ">
+  <div class="mt-2 ">
       {% if sponsors %}
     
        <h2 class='text-secondary text-center'><u>Sponsors</u></h2>
@@ -17,9 +19,8 @@
            <th>Sponsor Name</th>
            <th>Budget</th>
            <th>Industry</th>
-           <th>Password</th>
            <th>Status</th>
-           <th colspan=1></th>
+           <th></th>
          </tr>
           </thead>
          {% for sponsor in sponsors %}
@@ -29,15 +30,15 @@
          <td>{{ sponsor.sponsor_name }}</td>
            <td>{{ sponsor.budget }}</td>
            <td>{{ sponsor.industry }}</td>
-           <td>{{ sponsor.sponsor_password }}</td>
            <td>{{ sponsor.status }}</td>
-           <td><a type="button" href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a></td>
+           <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
+           </td>
          </tr>
-         {% for campaign in sponsor.campaigns %}
+         <!-- {% for campaign in sponsor.campaigns %}
          <tr><td>
            {{campaign.name}}
          </td></tr>
-         {% endfor %}
+         {% endfor %} -->
          {% endfor %}
        </table>
        {% endif %}
@@ -55,7 +56,7 @@
            <th>Niche</th>
            <th>Reach</th>
            <th>Status</th>
-           <th colspan=1></th>
+           <th></th>
          </tr>
          </thead>
          {% for influencer in influencers %}
@@ -68,7 +69,7 @@
            <td>{{ influencer.niche }}</td>
            <td>{{ influencer.reach }}</td>
            <td>{{influencer.status}}</td>
-           <td><a type="button" href='/admin/influencer/flag/{{influencer.influencer_id}}' class="btn btn-danger">Change Status</a></td>
+           <td><a  href='/admin/influencer/flag/{{influencer.influencer_id}}' class="btn btn-danger">Change Status</a></td>
          </tr>
          {% endfor %}
        </table>
@@ -92,7 +93,7 @@
          <th>Goals</th>
          <th>Status</th>
          <th>Sponsor Id</th>
-         <th>Status</th>
+         <th>Expiry</th>
          <th colspan=1></th>
        </tr>
        </thead>
@@ -130,7 +131,7 @@
          <th>Payment Amount</th>
          <th>Status</th>
          <th>Negotiation</th>
-         <th colspan=1></th>
+         <!-- <th colspan=1></th> -->
        </tr></thead>
        {% for adrequest in adrequests %}
 
@@ -142,7 +143,7 @@
          <td>{{ adrequest.payment_amount  }}</td>
          <td>{{ adrequest.status }}</td>
          <td>{{adrequest.negotiation}}</td>
-         <td><a type="button" href='/admin/campaign/flag/{{adrequest.adrequest_id}}' class="btn btn-danger">Change Status</a></td>
+         <!-- <td><a type="button" href='/admin/campaign/flag/{{adrequest.adrequest_id}}' class="btn btn-danger">Change Status</a></td> -->
        </tr>
        {% endfor %}
      </table>

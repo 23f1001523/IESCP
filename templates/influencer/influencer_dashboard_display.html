@@ -4,7 +4,8 @@
 
 <div>
   {% if adrequests %}
-   <h2 class='text-secondary text-center mt-3'><u>Recieved Ad Requests</u></h2>
+   <h2 class='text-secondary text-center mt-3'><u>Private AdRequests Recieved</u></h2>
+  <h6 class='text-center text-danger'>If you accept all terms , please send OK in negotiation box</h6>
    <table class='table table-responsive'>
      <thead class='bg-dark text-white'>
      <tr>
@@ -26,18 +27,27 @@
        <td>{{ adrequest.requirements   }}</td>
        <td>{{ adrequest.payment_amount  }}</td>
        <td>{{ adrequest.status }}</td>
-       <td>{{adrequest.negotiation}}</td>
+       
        <td>
+         {% if adrequest.status=='PENDING' %}
+         <form action='/influencer/show/{{adrequest.adrequest_id}}' method='POST'>
+            <div class='input-group'>
+            <input type='text' class='form-control font-size-sm' id='negotiation' name='negotiation' placeholder='Enter amount or OK'>
 
-         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#negotiate" onclick='fetchId("{{adrequest.adrequest_id}}")'>
-         <i class="bi bi-search"></i>Negotiate
-         </button>
-         <!-- <a type="button" href='#' class="btn btn-warning">Negotiate</a></td> -->
-       <td><a type="button" href='#' class="btn btn-info">Accept</a></td>
-       <td><a type="button" href='#' class="btn btn-danger">Reject</a></td>
+            <button type='submit' class='btn btn-info text-white'>Negotiate</button>
+              </div>
+            </form>
+         {% else %}
+         <h6 class='text-danger'>Request already accepted</h6>
+         {% endif %}
+         
+       </td>
+        
+       
      </tr>
      {% endfor %}
    </table>
+  {% else %}<h1 class='text-center text-danger mt-5'>No Notifications Yet</h1>
    {% endif %}
 </div>
 

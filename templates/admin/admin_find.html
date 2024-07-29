@@ -14,7 +14,8 @@
           <option selected>Select Search Type</option>
           <option value="name">By Name</option>
           <option value="industry">By Industry</option>
-          
+          <option value="budget">By Budget</option>
+          <option value="status">By Status</option>
         </select>
         
         <label for="sponsor_search" class="form-label"></label>
@@ -39,6 +40,7 @@
           <option value="category">By Category</option>
           <option value="niche">By Niche</option>
           <option value="reach">By Reach</option>
+          <option value="reach">By Status</option>
         </select>
 
         <label for="influencer_search" class="form-label"></label>
@@ -64,10 +66,12 @@
           <option value="visibility">By Visibility</option>
           <option value="start_date">By Start Date</option>
           <option value="end_date">By End Date</option>
+          <option value="description">By Description</option>
+          <option value="status">Status</option>
         </select>
 
-        <label for="camapign_search" class="form-label"></label>
-        <input class="form-control" list="datalistOptions" id="camapign_search" name="camapign_search"placeholder="Type to search...">
+        <label for="campaign_search" class="form-label"></label>
+        <input class="form-control" list="datalistOptions" id="campaign_search" name="campaign_search"placeholder="Type to search...">
             <input type="submit" value="Search"  class="btn btn-dark mt-3">
            </form>
       </div>
@@ -83,8 +87,10 @@
          <form action="/admin/adrequest/search" method='POST'>
         <select class="form-select" aria-label="Default select example" name="adrequest_search_type">
           <option selected>Select Search Type</option>
-          
+         
           <option value="payment_amount">By Payment Amount</option>
+          <option value="message">By Message</option>
+          <option value="requirements">By Requirements</option>
           <!-- <option value="campaign">By Campaign</option> -->
         </select>
 
@@ -115,6 +121,7 @@
            <th>Industry</th>
            <th>Password</th>
            <th>Status</th>
+           <th></th>
          </tr>
          </thead>
          {% for sponsor in sponsors %}
@@ -126,7 +133,7 @@
            <td>{{ sponsor.industry }}</td>
            <td>{{ sponsor.sponsor_password }}</td>
            <td>{{ sponsor.status }}</td>
-           
+            <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
          </tr>
          {% endfor %}
        </table>
@@ -142,10 +149,11 @@
              <th>Sr</th>
              <th>Influencer Id</th>
              <th>Influencer Name</th>
-             <th>Budget</th>
-             <th>Industry</th>
-             <th>Password</th>
+             <th>Category</th>
+             <th>Niche</th>
+             <th>Reach</th>
              <th>Status</th>
+             <th></th>
            </tr>
            </thead>
            {% for influencer in influencers %}
@@ -153,11 +161,12 @@
              <td>{{loop.index}}</td>
              <td>{{ influencer.influencer_id }}</td>
            <td>{{ influencer.influencer_name }}</td>
-             <td>{{ influencer.budget }}</td>
-             <td>{{ influencer.industry }}</td>
-             <td>{{ influencer.influencer_password }}</td>
+             <td>{{ influencer.category }}</td>
+             <td>{{ influencer.niche }}</td>
+             <td>{{ influencer.reach }}</td>
+             
              <td>{{ influencer.status }}</td>
-
+              <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
            </tr>
            {% endfor %}
          </table>
@@ -181,6 +190,7 @@
              <th>Visibility</th>
              <th>Goals</th>
              <th>Status</th>
+             <th></th>
            </tr>
            </thead>
            {% for campaign in campaigns %}
@@ -195,7 +205,7 @@
              <td>{{ campaign.visibility }}</td>
               <td>{{ campaign.goals }}</td>
              <td>{{ campaign.status }}</td>
-             
+              <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
            </tr>
            {% endfor %}
          </table>
@@ -203,10 +213,11 @@
     </div>
     <!-- ADREQUESTS TABLE -->
     <div class="mt-1">
+      
         {% if adrequests %}
-         <h1 class='text-center text-secondary '><u>Ad Requests</u></h1>
+         <h1 class='text-secondary text-center'>Ad Requests</h1>
          <table class='table'>
-           <thead class='bg-dark text-white'>
+           <thead class='bg-dark text-white '>
            <tr>
              <th>Sr</th>
              <th>Campaign Id</th>
@@ -215,6 +226,8 @@
              <th>Requirements</th>
              <th>Payment_Amount</th>
              <th>Status</th>
+             <th>Negotiation</th>
+             <th colspan=2></th>
            </tr>
            </thead>
            {% for adrequest in adrequests %}
@@ -226,11 +239,22 @@
              <td>{{ adrequest.requirements }}</td>
              <td>{{ adrequest.payment_amount }}</td>
              <td>{{ adrequest.status }}</td>
+             <td><form action='/influencer/show/{{adrequest.adrequest_id}}' method='POST'>
+               <div class='input-group'>
+               <input type='text' class='form-control' id='negotiation' name='negotiation' placeholder='Please Enter here'>
+
+               <button type='submit' class='btn btn-danger'>Send Request</button>
+                 </div>
+               </form>
+             </td>
 
            </tr>
            {% endfor %}
          </table>
          {% endif %}
+ 
     </div>
-
+    <div class='text-center'>
+     <a type="button" href='/admin/dashboard' class="btn btn-danger text-white mt-3">Back</a>
+      </div>
 {% endblock %}

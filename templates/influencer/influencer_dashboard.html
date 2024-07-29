@@ -6,7 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="/static/css/style.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
@@ -16,41 +16,112 @@
 
   </head>
   <body>
-    
-   
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/influencer/dashboard">Influencer Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link active" href="/influencer/profile">Welcome {{session['user_id']}}</a>
-            </li></ul>
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/influencer/profile">Profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/influencer/find">Find</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/influencer/stats">Stats</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/influencer/logout">Logout</a>
-            </li>
-            
 
-          </ul>
+    <div class="parent">
+      <div class="header">
+              <!-- NAVBAR -->
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="/influencer/dashboard">Influencer Dashboard</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                      <li class="nav-item">
+                          <a class="nav-link active" href="/influencer/profile">Welcome {{session['user_id']}}</a>
+                      </li></ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                      <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/influencer/profile">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/influencer/find">Find</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/influencer/stats">Stats</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                      </li>
+                      
           
-        </div>
+                    </ul>
+                    
+                  </div>
+                </div>
+              </nav>
       </div>
-    </nav>
+      <div class="aside">
+        <nav class="navbar navbar-dark">
+            <ul class="navbar-nav navbar-expand-md">
+            <li>
+              <div class="text-muted small fw-bold text-uppercase px-3">
+                CORE
+              </div>
+            </li>
+            <li>
+              <a href="/influencer/dashboard" class="nav-link px-3 active">
+                <span class="me-2"><i class="bi bi-speedometer2"></i></span>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="my-4"><hr class="dropdown-divider bg-light" /></li>
+            <li>
+              <div class="small fw-bold text-uppercase px-3 mb-3">
+                Interface
+              </div>
+            </li>
 
+            <li>
+              <a class="nav-link px-4 sidebar-link position-relative" href="/influencer/dashboard"> Notifications 
+                <span class="position-absolute top-2 start-100 translate-center badge rounded-pill bg-danger">{{adrequests|length}}
+                  
+                </span>
+              </a>
+            </li>
+              <li>
+                <a href="/public/adrequests/status" class="nav-link px-3">
+                  <span class="me-2"><i class="bi bi-people"></i></span>
+                  <span>Public Arequests</span>
+                </a>
+              </li>
+            <li>
+              <a href="/private/adrequests/status" class="nav-link px-3">
+                <span class="me-2"><i class="bi bi-camera-reels"></i></span>
+                <span>Accepted Adrequests</span>
+              </a>
+            </li>
+            <!-- <li>
+              <a href="/admin/adrequests" class="nav-link px-3">
+                <span class="me-2"><i class="bi bi-badge-ad-fill"></i></span>
+                <span>AdRequests Mgmt</span>
+              </a>
+            </li> -->
+            <li class="my-4"><hr class="dropdown-divider bg-light" /></li>
+            <li>
+              <div class="fw-bold text-uppercase px-3 mb-3">
+                Addons
+              </div>
+            </li>
+            <li>
+              <a href="/influencer/stats" class="nav-link px-3">
+                <span class="me-2"><i class="bi bi-graph-up"></i></span>
+                <span>Charts</span>
+              </a>
+            </li>
+         
+          </ul>
+
+
+        </nav>
+
+      
+      </div>
+
+      <div class="main">
+       <!-- Main Area -->
+        <div class="container">
     <!-- FLASH MESSAGES SCRIPT -->
     {% with messages=get_flashed_messages() %}
     {% if messages %}
@@ -61,18 +132,23 @@
         </div>
           {% endfor %}
           {% endif %}
-        {% endwith %}  
-    
-    
+        {% endwith %}    
+        <!-- CHild Page Content Area -->
+        {% block content %}
 
-    
-    
-  
-     
-    {% block content %}
-    {% endblock %}
+        
+        {% endblock %}
 
-    
+      </div>
+      </div>
+        <div class="footer">
+          <nav class="navbar fixed-bottom bg-dark navbar-dark">
+            <div class="container-fluid">
+              <a class="navbar-brand me-auto" href="#">&copy 2024 Copyright: 23f1001523</a>
+            </div>
+          </nav>
+        </div>
+  </div>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 

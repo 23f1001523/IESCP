@@ -7,8 +7,12 @@
 <div class="row justify-content-center mt-2">
   <div class="col-md-6 bg-light border border-dark rounded p-2">
 
-      <h3 class='text-center mb-3'>Ad Request</h3>
+      <h3 class='text-center mb-3'>Create Ad Request</h3>
+    <div class='row'>
+      <div class='col ms-9'><h5 class='text-center text-danger'>Total Budget: {{campaign.budget}}</h5></div>    
+      <div class='col ms-3'><h5 class='text-center text-danger mb-3'>Budget Spent: {{used_budget}}</h5></div></div> 
       <form  action='/sponsor/adrequest/{{campaign.campaign_id}}' method='POST'>
+       
         <div  class="form-floating mb-3">
           <input type="text" class="form-control" id="campaign_id" name='campaign_id' value="{{campaign.campaign_id}}" disabled>
           <label for="campaign_id" class="form-label text-dark" >Campaign Id</label>
@@ -19,18 +23,20 @@
         </div>
 
         <div  class="form-floating mb-3">
-          <input type="text" class="form-control" id="message" name='message' required>
+          <textarea type="text" class="form-control" id="message" name='message' required></textarea>
           <label for="message" class="form-label text-dark">Message</label>
         </div>
         <div  class="form-floating mb-3">
-          <input type="text" class="form-control" id="requirements" name='requirements' required>
+          <textarea type="text" class="form-control" id="requirements" name='requirements' required></textarea>
           <label for="requirements" class="form-label text-dark">Requirements</label>
         </div>
         <div  class="form-floating mb-3">
           <input type="number" class="form-control" id="payment_amount" name='payment_amount'>
           <label for="payment_amount" class="form-label text-dark">Payment Amount</label>
         </div>
+        <div class='text-center'>
         <button type="submit" class="btn btn-primary">Submit</button>
+        <a type="button" href='/sponsor/campaign/show' class="btn btn-danger text-white">Back</a></div>
       </form>
   </div>
 </div>

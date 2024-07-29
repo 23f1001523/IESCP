@@ -7,7 +7,9 @@
 <div class="row justify-content-center mt-2">
   <div class="col-md-6 bg-light border border-dark rounded p-2">
 
-      <h3 class='text-center mb-3'>Camapign</h3>
+      <h3 class='text-center mb-3'>Modify Campaign</h3>
+    <h5 class='text-center mb-3 text-danger'>Sponsor Budget : {{sponsors.budget}}</h5>
+    <h5 class='text-center mb-3 text-danger'>Budget Spent : {{campaigns.budget}} </h5>
       <form  action='/sponsor/campaign/modify/{{campaigns.campaign_id}}' method='POST'>
 
 
@@ -16,7 +18,7 @@
           <label for="campaign_name" class="form-label text-dark">Campaign Name</label>
         </div>
         <div  class="form-floating mb-1">
-          <input type="text" class="form-control" id="description" name='description' value="{{campaigns.description}}">
+          <textarea type="text" class="form-control" id="description" name='description'>{{campaigns.description}}</textarea>
           <label for="description" class="form-label text-dark">Description</label>
         </div>
         <div  class="form-floating mb-1">
@@ -44,7 +46,7 @@
           </select>
         </div>
         <div  class="form-floating mb-1">
-          <input type="text" class="form-control" id="goals" name='goals' value="{{campaigns.goals}}">
+          <textarea type="text" class="form-control" id="goals" name='goals'>{{campaigns.goals}}</textarea>
           <label for="goals" class="form-label text-dark">Goals</label>
         </div>
         <div class='text-center mt-2'>
