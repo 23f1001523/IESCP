@@ -4,7 +4,7 @@
 
 <div>
   {% if adrequests %}
-   <h2 class='text-secondary text-center mt-3'><u>Private AdRequests Recieved</u></h2>
+  <h2 class='text-secondary text-center mt-3'><u>Notifications Received for Private AdRequests</u></h2>
   <h6 class='text-center text-danger'>If you accept all terms , please send OK in negotiation box</h6>
    <table class='table table-responsive'>
      <thead class='bg-dark text-white'>
@@ -35,8 +35,11 @@
             <input type='text' class='form-control font-size-sm' id='negotiation' name='negotiation' placeholder='Enter amount or OK'>
 
             <button type='submit' class='btn btn-info text-white'>Negotiate</button>
+              <a class="btn btn-success ms-2" href="/influencer/pvtadrequest/accept/{{adrequest.adrequest_id}}">Accept</a>
+              <a class="btn btn-danger ms-2" href="/influencer/pvtadrequest/reject/{{adrequest.adrequest_id}}">Reject</a>
               </div>
             </form>
+         
          {% else %}
          <h6 class='text-danger'>Request already accepted</h6>
          {% endif %}

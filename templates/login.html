@@ -22,12 +22,12 @@
               <h3>Admin Login</h3>
               <form action="/admin/login" method="POST">
               <div class="form-floating mb-3 mt-3">
-                <input type="text" class="form-control" id="admin_id" placeholder="Enter User ID" name="admin_id" >
+                <input type="text" class="form-control" id="admin_id" placeholder="Enter User ID" name="admin_id" value="admin" readonly>
                 <label for="admin_id">User ID</label>
 
               </div>
               <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="admin_password" placeholder="Enter Password" name="admin_password">
+                <input type="password" class="form-control" id="admin_password" placeholder="Enter Password" name="admin_password" required>
                 <label for="admin_password">Password</label>
               </div>
 
@@ -44,12 +44,12 @@
               <h3>Sponsors Login </h3>
               <form action="/sponsor/login" method="POST">
                   <div class="form-floating mb-3 mt-3">
-                    <input type="text" class="form-control" id="sponsor_id" placeholder="Enter User ID" name="sponsor_id" >
+                    <input type="text" class="form-control" id="sponsor_id" placeholder="Enter User ID" name="sponsor_id" required >
                     <label for="sponsor_id">User ID</label>
                   </div>
 
                   <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="sponsor_password" placeholder="Enter Password" name="sponsor_password">
+                    <input type="password" class="form-control" id="sponsor_password" placeholder="Enter Password" name="sponsor_password" required>
                     <label for="sponsor_password">Password</label>
                   </div>
 
@@ -65,11 +65,11 @@
             <h3>Influencer Login</h3>
             <form action="/influencer/login" method="POST">
               <div class="form-floating mb-3 mt-3">
-                <input type="text" class="form-control" id="influencer_id" placeholder="Enter User Id" name="influencer_id">
+                <input type="text" class="form-control" id="influencer_id" placeholder="Enter User Id" name="influencer_id" required>
                 <label for="influencer_id">User ID</label>
               </div>
              <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="influencer_password" placeholder="Password" name="influencer_password">
+                <input type="password" class="form-control" id="influencer_password" placeholder="Password" name="influencer_password" required>
                 <label for="influencer_password">Password</label>
               </div>
 

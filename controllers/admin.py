@@ -121,9 +121,11 @@ def flagsponsor(id):
     if sponsor.status == 'ACTIVE':
       sponsor.status = 'INACTIVE'
       db.session.commit()
+      flash("Status Updated successfully for " +id)
     else:
       sponsor.status = 'ACTIVE'
       db.session.commit()
+      flash("Status Updated successfully for " +id)
   except:
     flash(fatalerror)
   return redirect(url_for('admin_info'))
@@ -137,9 +139,11 @@ def flaginfluencer(id):
     if influencer.status == 'ACTIVE':
       influencer.status = 'INACTIVE'
       db.session.commit()
+      flash("Status Updated successfully for " +id)
     else:
       influencer.status = 'ACTIVE'
       db.session.commit()
+      flash("Status Updated successfully for " +id)
   except:
     flash(fatalerror)
   return redirect(url_for('admin_info'))
@@ -153,24 +157,28 @@ def flagcampaign(id):
     if campaign.status == 'ACTIVE':
       campaign.status = 'INACTIVE'
       db.session.commit()
-    else:
+      flash("Status Updated successfully for " +campaign.name)
+    elif campaign.status == 'INACTIVE':
       campaign.status = 'ACTIVE'
       db.session.commit()
+      flash("Status Updated successfully for " +campaign.name)
+    else:
+      flash("Campaign already Deleted.")
   except:
     flash(fatalerror)
   return redirect(url_for('admin_info'))
 
 
-#FLAG ADREQUEST BUTTON ON ADMIN INFO
+# #FLAG ADREQUEST BUTTON ON ADMIN INFO
 @app.route('/admin/adrequest/flag/<id>')
 def flagadrequest(id):
   try:
     adrequest = AdRequest.query.filter_by(adrequest_id=id).first()
-    if adrequest.status == 'ACTIVE':
-      adrequest.status = 'INACTIVE'
+    if adrequest.flag_status == 'ACTIVE':
+      adrequest.flag_status = 'INACTIVE'
       db.session.commit()
-    else:
-      adrequest.status = 'ACTIVE'
+    elif adrequest.flag_status == 'INACTIVE':
+      adrequest.flag_status = 'ACTIVE'
       db.session.commit()
   except:
     flash(fatalerror)

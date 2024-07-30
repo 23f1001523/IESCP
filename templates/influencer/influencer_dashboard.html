@@ -75,21 +75,25 @@
 
             <li>
               <a class="nav-link px-4 sidebar-link position-relative" href="/influencer/dashboard"> Notifications 
-                <span class="position-absolute top-2 start-100 translate-center badge rounded-pill bg-danger">{{adrequests|length}}
+                <span class="position-absolute top-2 start-100 translate-center badge rounded-pill bg-danger">{{session['pvtNotifications']}}
                   
                 </span>
               </a>
             </li>
               <li>
-                <a href="/public/adrequests/status" class="nav-link px-3">
-                  <span class="me-2"><i class="bi bi-people"></i></span>
+                <a href="/influencer/public/adrequests/show" class="nav-link px-4 sidebar-link position-relative">
                   <span>Public Arequests</span>
+                  <span class="position-absolute top-2 start-100 translate-center badge rounded-pill bg-danger">{{session['allPublic']}}
+
+                  </span>
                 </a>
               </li>
             <li>
-              <a href="/private/adrequests/status" class="nav-link px-3">
-                <span class="me-2"><i class="bi bi-camera-reels"></i></span>
-                <span>Accepted Adrequests</span>
+              <a href="/influencer/adrequests/accepted/show" class="nav-link px-4 sidebar-link position-relative">
+                <span>My Adrequests</span>
+                <span class="position-absolute top-2 start-100 translate-center badge rounded-pill bg-danger">{{session['allAdrequests']}}
+
+                </span>
               </a>
             </li>
             <!-- <li>

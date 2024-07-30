@@ -6,7 +6,7 @@
       <div class="col-md-6 bg-light text-center">
             <a type="button" href='/sponsor/campaign' class="btn btn-primary mb-3 p-2">+ Add Campaign</a>
 
-        <a type="button" href='/sponsor/dashboard' class="btn btn-dark mb-3 p-2 text-white">Back</a>
+        <a type="button" href='/sponsor/dashboard' class="btn btn-danger mb-3 p-2 text-white">Back</a>
       </div>
     </div>
   <div class="row text-center ">
@@ -63,7 +63,9 @@
            <td>{{adrequest.influencer_id}}</td>
            <td><a type="button" href='/sponsor/adrequest/negotiation/{{adrequest.adrequest_id}}' class="btn btn-success text-white btn-sm">Negotiation</a></td>
            {% if adrequest.status=='PENDING' %}
-           <td><a type="button" href='/sponsor/adrequest/modify/{{adrequest.adrequest_id}}' class="btn btn-warning btn-sm">Edit</a></td>
+           <td><a type="button" href='/sponsor/adrequest/modify/{{adrequest.adrequest_id}}' class="btn btn-warning btn-sm">Edit</a>
+             <a type="button" href='/sponsor/delete/adrequest/{{adrequest.adrequest_id}}' class="btn btn-danger btn-sm">Delete</a>
+           </td>
            {% if campaign.visibility=='Private' %}
             <td><a type="button" href='/sponsor/send/adrequest/{{adrequest.adrequest_id}}' class="btn btn-dark btn-sm">Send</a>
             </td>
@@ -71,7 +73,7 @@
            {% endif %}
 
            {% endif %} 
-           <td><a type="button" href='/sponsor/delete/adrequest/{{adrequest.adrequest_id}}' class="btn btn-danger btn-sm">Delete</a></td>
+          
            <!-- {% if campaign.visibility=='Private' %}
             {% for adrequest in campaign.adrequests %}
            {% if adrequest.status=='PENDING' %}

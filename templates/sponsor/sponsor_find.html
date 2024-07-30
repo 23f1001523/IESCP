@@ -18,7 +18,7 @@
           <option value="visibility">By Visibility</option>
           <option value="start_date">By Start Date</option>
           <option value="end_date">By End Date</option>
-
+          <option value="expiry">By Expiry</option>
         </select>
 
         <label for="sponsor_search" class="form-label"></label>
@@ -93,9 +93,9 @@
                <th>Sr</th>
                <th>Influencer Id</th>
                <th>Influencer Name</th>
-               <th>Budget</th>
-               <th>Industry</th>
-               <th>Password</th>
+               <th>Category</th>
+               <th>Niche</th>
+               <th>Reach</th>
                <th>Status</th>
              </tr>
                </thead>
@@ -104,9 +104,9 @@
                <td>{{loop.index}}</td>
                <td>{{ influencer.influencer_id }}</td>
              <td>{{ influencer.influencer_name }}</td>
-               <td>{{ influencer.budget }}</td>
-               <td>{{ influencer.industry }}</td>
-               <td>{{ influencer.influencer_password }}</td>
+               <td>{{ influencer.category }}</td>
+               <td>{{ influencer.niche }}</td>
+               <td>{{ influencer.reach }}</td>
                <td>{{ influencer.status }}</td>
 
              </tr>
@@ -132,6 +132,7 @@
                <th>Visibility</th>
                <th>Goals</th>
                <th>Status</th>
+               <th>Expiry</th>
              </tr>
              </thead>
              {% for campaign in campaigns %}
@@ -146,7 +147,7 @@
                <td>{{ campaign.visibility }}</td>
                 <td>{{ campaign.goals }}</td>
                <td>{{ campaign.status }}</td>
-
+                <td>{{campaign.expiry}}</td>
              </tr>
              {% endfor %}
            </table>

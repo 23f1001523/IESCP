@@ -58,8 +58,8 @@ class Influencer(db.Model):
   create_date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
   adrequest = db.relationship("AdRequest", backref="influencer", lazy=True)
   negotiations = db.relationship('Negotiation',
-                                       backref='incluencer',
-                                       lazy=True)
+                                 backref='incluencer',
+                                 lazy=True)
 
   def __init__(self, influencer_id, influencer_name, influencer_password,
                category, niche, reach, status):
@@ -76,7 +76,7 @@ class Campaign(db.Model):
   __tablename__ = 'campaigns'
   campaign_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
   name = db.Column(db.String(200), nullable=False)
-  description = db.Column(db.String(200), nullable=False)
+  description = db.Column(db.String(500), nullable=False)
   start_date = db.Column(db.String(200), nullable=False)
   end_date = db.Column(db.String(200), nullable=False)
   budget = db.Column(db.Float, nullable=False)
@@ -116,39 +116,35 @@ class Campaign(db.Model):
 class AdRequest(db.Model):
   __tablename__ = 'adrequests'
   adrequest_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-  message = db.Column(db.String(200), nullable=False)
-  requirements = db.Column(db.String(200), nullable=False)
+  message = db.Column(db.String(500), nullable=False)
+  requirements = db.Column(db.String(500), nullable=False)
   payment_amount = db.Column(db.Float, nullable=False)
-  status = db.Column(db.String(200), nullable=False)
+  status = db.Column(db.String(200),
+                     nullable=False)  #PENDING/ACCEPTED/REJECTED
+  flag_status = db.Column(db.String(50), nullable=False)  #active or inactive
   campaign_id = db.Column(db.String(200),
                           db.ForeignKey("campaigns.campaign_id"),
                           nullable=False)
   influencer_id = db.Column(db.String(200),
                             db.ForeignKey("influencers.influencer_id"))
   create_date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-  
-  negotiations = db.relationship('Negotiation',
-                                       backref='adrequest',
-                                       lazy=True)
 
-  def __init__(self,
-               message,
-               requirements,
-               payment_amount,
-               status,
-               campaign_id
-               ):
+  negotiations = db.relationship('Negotiation', backref='adrequest', lazy=True)
+
+  def __init__(self, message, requirements, payment_amount, status,
+               flag_status, campaign_id, influencer_id):
     self.message = message
     self.requirements = requirements
     self.payment_amount = payment_amount
     self.status = status
+    self.flag_status = flag_status
     self.campaign_id = campaign_id
-   
+    self.influencer_id = influencer_id
 
 
 class Negotiation(db.Model):
   __tablename__ = 'negotiations'
-  id=db.Column(db.Integer, autoincrement=True, primary_key=True)
+  id = db.Column(db.Integer, autoincrement=True, primary_key=True)
   negotiation = db.Column(db.String(400))  # negotiation by influencer
   adrequest_id = db.Column(db.Integer,
                            db.ForeignKey('adrequests.adrequest_id'),
@@ -156,8 +152,8 @@ class Negotiation(db.Model):
   influencer_id = db.Column(db.Integer,
                             db.ForeignKey('influencers.influencer_id'),
                             nullable=False)
-  def __init__(self,negotiation,influencer_id,adrequest_id):
-     self.negotiation = negotiation
-     self.influencer_id=influencer_id
-     self.adrequest_id=adrequest_id
-    
+
+  def __init__(self, negotiation, influencer_id, adrequest_id):
+    self.negotiation = negotiation
+    self.influencer_id = influencer_id
+    self.adrequest_id = adrequest_id

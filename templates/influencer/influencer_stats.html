@@ -4,25 +4,28 @@
 
 
 
-<div class="row justify-content-center ">
-  
-   <div class="col-md-6">
-     <div class="card">
+<div class="row justify-content-center mt-2" >
+  <div class='text-center mb-2'>
+     <a type="button" href='/sponsor/dashboard' class="btn btn-danger text-white mt-3">Back</a>
+      </div>
+   <div class="col-md-6" id="progresschart">
+     <div class="card" >
        <div class="card-header">
-          <h3>Campaign Progress</h3>
+          <h3 class='text-center'>Campaign Progress</h3>
        </div>
        <div class="card-body">
          <canvas id="campaignProgressChart" class='mt-5 justify-content-center'></canvas>
        </div>
      </div>
 </div>
-   <div class="col-md-6">
-            <div class="card">
+   <div class="col-md-6" id="cardbudget">
+          <div id="error"></div>
+            <div class="card" >
               <div class="card-header">
-                 <h3>Campaign Progress</h3>
+                 <h3>Adrequest Budgets</h3>
               </div>
               <div class="card-body">
-                <canvas id="campaignBudgetChart" class='mt-5 justify-content-center'></canvas>
+                <canvas id="adrequestBudgetChart" class='mt-5 justify-content-center'></canvas>
               </div>
             </div>
        </div>
@@ -61,9 +64,20 @@
             label: '# of Campaign Progress',
             data: values,
             borderWidth: 1,
-            backgroundColor:['rgba(255, 205, 86, 0.7)','rgba(153, 102, 255, 0.7)','rgba(255, 99, 132, 0.7)',
-            'rgba(75, 192, 192, 0.7)']
-        
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(255, 205, 86, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 205, 86, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(153, 102, 255, 1)',
+            ]
           }],
         },
         options: {
@@ -99,50 +113,71 @@
       return response.json();
     })
     .then((data)=>{
-      console.log(data);
-      const ctx = document.getElementById('campaignBudgetChart');
+      // console.log(data);
+      const ctx = document.getElementById('adrequestBudgetChart');
       const labels=data.map(item=>item.name)
       const values=data.map(item=>item.budget)
+      if(values.length>0){
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              barpercentage:0.5,
+              barThickness: 30,
+              label: '# of Adrequests Budget',
+              data: values,
+              borderWidth: 1,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.7)',
+                  'rgba(75, 192, 192, 0.7)',
+                  'rgba(255, 205, 86, 0.7)',
+                  'rgba(54, 162, 235, 0.7)',
+                  'rgba(153, 102, 255, 0.7)',
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(255, 205, 86, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(153, 102, 255, 1)',
+              ]
 
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: labels,
-          datasets: [{
-            barpercentage:0.5,
-            barThickness: 30,
-            label: '# of Campaign Progress',
-            data: values,
-            borderWidth: 1,
-            backgroundColor:['rgba(255, 205, 86, 0.7)','rgba(153, 102, 255, 0.7)','rgba(255, 99, 132, 0.7)',
-            'rgba(75, 192, 192, 0.7)']
-
-          }],
-        },
-        options: {
-          plugins: {
-              datalabels: {
-                  anchor: 'end',
-                  align: 'top',
-                  formatter: function(values) {
-                      return values + '%'; // Format the label as percentage
-                  }
-              }
+            }],
           },
-          scales: {
-            x: {
-              max:100,
-              beginAtZero: true,
-              ticks: {
-                  callback: function(values) {
-                      return values + '%'; // Append '%' to the tick values
-                  }
+          options: {
+            radius: '85%',
+            aspectRatio: 1.7,
+            responsive: true, 
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(values) {
+                        return values + '%'; // Format the label as percentage
+                    }
+                }
+            },
+            scales: {
+              x: {
+                max:100,
+                beginAtZero: true,
+                ticks: {
+                    callback: function(values) {
+                        return values + '%'; // Append '%' to the tick values
+                    }
+                }
               }
-            }
-          },
-          indexAxis: 'y'
-        }
-      });
+            },
+            indexAxis: 'y'
+          }
+        });
+      }else{
+        // document.getElementById('error').innerHTML=`<div class="alert alert-danger text-center" role="alert">No data available</div>`;
+        document.getElementById('cardbudget').style.display='none';
+        // document.getElementById('progresschart').style.display=''
+      }
+      
     })
   }
 

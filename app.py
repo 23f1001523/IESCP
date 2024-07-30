@@ -17,13 +17,13 @@ def createApp():
   app.config.from_object(LocalDevelopmentConfig)
   app.app_context().push()
   db.init_app(app)
-  # db.create_all()
+  db.create_all()
   admin = Admin.query.filter_by(admin_id="admin").first()
   if not admin:
     admin = Admin(admin_id="admin", admin_name="admin", admin_password="admin")
     db.session.add(admin)
     db.session.commit()
-    intialiseApp
+  intialiseApp()
   # migrate.init_app(app, db)
   return app
 

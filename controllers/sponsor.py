@@ -3,11 +3,12 @@ from werkzeug.utils import redirect
 from datetime import datetime
 from models.model import Sponsor, db, Influencer, Admin, Campaign, AdRequest, Negotiation
 from flask import current_app as app
-from controllers.usermanager import userlogin,login_required_sponsor
+from controllers.usermanager import isActive, userlogin, login_required_sponsor
 from sqlalchemy import func
 from functools import wraps
 
-fatalerror="Error Occured. Please contact Administrator"
+fatalerror = "Error Occured. Please contact Administrator"
+
 
 # SPONSOR REGISTER
 @app.route('/sponsor/register', methods=['GET', 'POST'])
@@ -47,22 +48,15 @@ def sponsor_login():
     password = request.form.get('sponsor_password')
     if id == '' or password == '':
       flash("Please enter all the fields")
-      return render_template('login.html')
     sponsor = Sponsor.query.filter_by(sponsor_id=id).first()
     if sponsor:
-      if sponsor.status == 'ACTIVE':
-        if sponsor.sponsor_password == password:
-          userlogin(sponsor, "sponsor")
-          return redirect(url_for('sponsordashboard'))
-        else:
-          flash("Password is wrong")
-          return render_template('login.html')
+      if sponsor.sponsor_password == password:
+        userlogin(sponsor, "sponsor")
+        return redirect(url_for('sponsordashboard'))
       else:
-        flash("You are not allowed to login")
-        return render_template('login.html')
+        flash("Password is wrong")
     else:
       flash("User ID not registered")
-      return render_template('login.html')
   return render_template('login.html')
 
 
@@ -70,22 +64,30 @@ def sponsor_login():
 @app.route('/sponsor/dashboard')
 @login_required_sponsor
 def sponsordashboard():
-  campaigns = Campaign.query.all()
-  adrequests = AdRequest.query.all()
-  negotiations = Negotiation.query.all()
-  user_name = session['user_name']
-  return render_template('/sponsor/sponsor_main.html',
-                         campaigns=campaigns,
-                         adrequests=adrequests,
-                         negotiations=negotiations,
-                         user_name=user_name)
+  try:
+    if isActive():
+      campaigns = Campaign.query.all()
+      adrequests = AdRequest.query.all()
+      negotiations = Negotiation.query.all()
+      user_name = session['user_name']
+      return render_template('/sponsor/sponsor_main.html',
+                             campaigns=campaigns,
+                             adrequests=adrequests,
+                             negotiations=negotiations,
+                             user_name=user_name)
+    else:
+      return render_template('error.html')
+  except:
+    return render_template('error.html')
+
 
 @app.route('/sponsor/profile')
 @login_required_sponsor
 def sponsorprofile():
-  sponsor_id=session['user_id']
+  sponsor_id = session['user_id']
   sponsor = Sponsor.query.filter_by(sponsor_id=sponsor_id).first()
-  return render_template('/sponsor/sponsor_profile.html',sponsor=sponsor)
+  return render_template('/sponsor/sponsor_profile.html', sponsor=sponsor)
+
 
 # SPONSOR PROFILE
 @app.route('/profile/change/password', methods=['GET', 'POST'])
@@ -106,10 +108,10 @@ def sponsor_profile():
           flash("Password Successfully Updated")
           return redirect(url_for('sponsorprofile'))
         else:
-          flash("Your Passwords do not match")
+          flash("Confirm Passwords do not match")
           return redirect(url_for('sponsorprofile'))
       else:
-        flash("You are not allowed to change password")
+        flash("Password entered is wrong")
         return redirect(url_for('sponsorprofile'))
     else:
       flash("User ID not registered")
@@ -117,7 +119,7 @@ def sponsor_profile():
   return redirect(url_for('sponsorprofile'))
 
 
-@app.route('/profile/change/budget',methods=['GET','POST'])
+@app.route('/profile/change/budget', methods=['GET', 'POST'])
 @login_required_sponsor
 def sponsor_profile_budget():
   sponsor_id = session['user_id']
@@ -132,9 +134,6 @@ def sponsor_profile_budget():
       flash("Sponsor ID not registered")
   sponsor = Sponsor.query.filter_by(sponsor_id=sponsor_id).first()
   return render_template('/sponsor/sponsor_profile.html', sponsor=sponsor)
-
-  
-
 
 
 # SPONSOR CAMPAIGN SHOW
@@ -155,15 +154,15 @@ def show_campaign():
 @app.route('/sponsor/campaign', methods=['GET', 'POST'])
 @login_required_sponsor
 def campaign():
-  sponsor_id=session['user_id']
-  sponsors=Sponsor.query.filter_by(sponsor_id=sponsor_id).first()
-  campaigns=Campaign.query.filter_by(sponsor_id=sponsor_id).all()
-  negotiations=Negotiation.query.all()
-  total_budget=0
+  sponsor_id = session['user_id']
+  sponsors = Sponsor.query.filter_by(sponsor_id=sponsor_id).first()
+  campaigns = Campaign.query.filter_by(sponsor_id=sponsor_id).all()
+  negotiations = Negotiation.query.all()
+  total_budget = 0
   for campaign in campaigns:
-    total_budget+=campaign.budget
+    total_budget += campaign.budget
   if request.method == 'POST':
-    name = request.form.get('campaign_name')
+    name = request.form.get('campaign_name').title()
     description = request.form.get('description')
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
@@ -173,7 +172,7 @@ def campaign():
     status = 'ACTIVE'
     sponsor_id = session['user_id']
     expiry = 'UNEXPIRED'
-    if (float(budget)+float(total_budget))>=sponsors.budget:
+    if (float(budget) + float(total_budget)) >= sponsors.budget:
       flash("Budget Exceeded")
       return redirect(url_for("campaign"))
     campaign = Campaign(name=name,
@@ -189,7 +188,10 @@ def campaign():
     db.session.add(campaign)
     db.session.commit()
     return redirect(url_for('show_campaign'))
-  return render_template('/sponsor/campaign_form.html',sponsors=sponsors,total_budget=total_budget)
+  return render_template('/sponsor/campaign_form.html',
+                         sponsors=sponsors,
+                         total_budget=total_budget)
+
 
 #DELETE CAMPAIGN BUTTON ON CAMPAIGN SHOW
 @app.route('/sponsor/delete/campaign/<id>', methods=['GET', 'POST'])
@@ -201,12 +203,13 @@ def delete_campaign(id):
       flash("Sorry,cannot delete the campaign.")
       break
   else:
-    campaign.status='DELETED'
+    campaign.status = 'DELETED'
     for adrequest in campaign.adrequests:
-      adrequest.status='DELETED'
+      adrequest.status = 'DELETED'
     db.session.commit()
   return redirect(url_for('show_campaign'))
-    
+
+
 #DELETE ADREQUEST BUTTON ON ADREQUEST TABLE IN CAMPAIGN SHOW
 @app.route('/sponsor/delete/adrequest/<id>')
 @login_required_sponsor
@@ -215,10 +218,11 @@ def delete_adrequest(id):
   if adrequest.status == 'ACCEPTED':
     flash("Sorry,cannot delete the adrequest.")
   else:
-    adrequest.status='DELETED'
+    adrequest.status = 'DELETED'
     flash('Adrequest deleted successfully.')
     db.session.commit()
   return redirect(url_for('show_campaign'))
+
 
 # VIEW BUTTON ON CAMPAIGN SHOW
 @app.route('/sponsor/campaign/table/<id>')
@@ -233,35 +237,45 @@ def show_sponsor_details(id):
 @app.route('/sponsor/adrequest/<id>', methods=['GET', 'POST'])
 @login_required_sponsor
 def adrequest(id):
-  
+
   if request.method == 'POST':
-    budget_spent=0
-    campaigns=Campaign.query.filter_by(campaign_id=id).first();
+    budget_spent = 0
+    campaigns = Campaign.query.filter_by(campaign_id=id).first()
     for adrequest in campaigns.adrequests:
-      budget_spent+=adrequest.payment_amount
+      budget_spent += adrequest.payment_amount
     message = request.form.get('message')
     requirements = request.form.get('requirements')
     payment_amount = request.form.get('payment_amount')
     status = 'PENDING'
-    if budget_spent+float(payment_amount)>=campaigns.budget:
+    flag_status = "ACTIVE"
+    if campaigns.visibility == "Private":
+      influencer_id = request.form.get('influencer_id')
+    else:
+      influencer_id = None
+
+    if budget_spent + float(payment_amount) >= campaigns.budget:
       flash("Budget Exceeded")
       return redirect(url_for('show_campaign'))
-    new_adrequest = AdRequest(
-        message=message,
-        requirements=requirements,
-        payment_amount=payment_amount,
-        status=status,
-        campaign_id=id,
-    )
+    new_adrequest = AdRequest(message=message,
+                              requirements=requirements,
+                              payment_amount=payment_amount,
+                              status=status,
+                              flag_status=flag_status,
+                              influencer_id=influencer_id,
+                              campaign_id=id)
     db.session.add(new_adrequest)
     db.session.commit()
     return redirect(url_for('show_campaign'))
   campaign = Campaign.query.filter_by(campaign_id=id).first()
-  used_budget=0
-  campaigns=Campaign.query.filter_by(campaign_id=id).first();
+  used_budget = 0
+  campaigns = Campaign.query.filter_by(campaign_id=id).first()
+  influencers = Influencer.query.all()
   for adrequest in campaigns.adrequests:
-    used_budget+=adrequest.payment_amount
-  return render_template('/sponsor/adrequest.html', campaign=campaign,used_budget=used_budget)
+    used_budget += adrequest.payment_amount
+  return render_template('/sponsor/adrequest.html',
+                         campaign=campaign,
+                         influencers=influencers,
+                         used_budget=used_budget)
 
 
 #ADREQUEST NEGOTIATION BY INFLUENCER
@@ -275,45 +289,43 @@ def adrequestnegotiation(id):
 
 @app.route('/sponsor/show/<id>', methods=['GET', 'POST'])
 def sponsorshow(id):
-  adrequests=AdRequest.query.filter_by(adrequest_id=id).first()
-  
+  adrequests = AdRequest.query.filter_by(adrequest_id=id).first()
+
   return render_template('/sponsor/adrequest_negotiation.html',
                          adrequests=adrequests)
+
 
 #ADREQUEST NEGOTIATION ACCEPT BY SPONSOR
 @app.route('/sponsor/negotiation/accept/<id>', methods=['GET', 'POST'])
 @login_required_sponsor
 def accept_negotiation(id):
   adrequests = AdRequest.query.filter_by(adrequest_id=id).first()
-  negotiations=Negotiation.query.filter_by(adrequest_id=id).first()
-  count=0
-  if adrequests.status=='PENDING' and count==0:
-    adrequests.influencer_id=negotiations.influencer_id
-    adrequests.status='ACCEPTED'
-    count+=1
+  negotiations = Negotiation.query.filter_by(adrequest_id=id).first()
+  count = 0
+  if adrequests.status == 'PENDING' and count == 0:
+    adrequests.influencer_id = negotiations.influencer_id
+    adrequests.status = 'ACCEPTED'
+    count += 1
     db.session.commit()
   else:
     flash('AdRequest already accepted')
   return redirect(url_for('show_campaign'))
 
 
-
-
 @app.route('/sponsor/negotiation/reject/<id>', methods=['GET', 'POST'])
 @login_required_sponsor
 def reject_negotiation(id):
   adrequests = AdRequest.query.filter_by(adrequest_id=id).first()
-  negotiations=Negotiation.query.filter_by(adrequest_id=id).first()
-  count=0
-  if adrequests.status=='ACCEPTED' and count==0:
-    adrequests.status='PENDING'
-    adrequests.influencer_id=None
-    count+=1
+  negotiations = Negotiation.query.filter_by(adrequest_id=id).first()
+  count = 0
+  if adrequests.status == 'ACCEPTED' and count == 0:
+    adrequests.status = 'PENDING'
+    adrequests.influencer_id = None
+    count += 1
     db.session.commit()
   else:
     flash('You have already rejected this negotiation')
   return redirect(url_for('show_campaign'))
-  
 
 
 # MODIFY BUTTON ON CAMAPIGN SHOW
@@ -321,7 +333,7 @@ def reject_negotiation(id):
 @login_required_sponsor
 def modify_campaign(id):
   campaigns = Campaign.query.filter_by(campaign_id=id).first()
-  sponsors=Sponsor.query.filter_by(sponsor_id=campaigns.sponsor_id).first()
+  sponsors = Sponsor.query.filter_by(sponsor_id=campaigns.sponsor_id).first()
   # total_budget=0
   # for adrequest in campaigns.adrequests:
   #   total_budget+=adrequest.payment_amount
@@ -347,40 +359,48 @@ def modify_campaign(id):
     campaign.status = status
     campaign.sponsor_id = sponsor_id
     campaign.expiry = expiry
-    if float(campaign.budget)+float(budget)>=sponsors.budget:
+    if float(campaign.budget) + float(budget) >= sponsors.budget:
       flash('Budget Exceeded')
     else:
       db.session.commit()
     return redirect(url_for('show_campaign'))
   return render_template('/sponsor/campaign_modify_form.html',
-                         campaigns=campaigns,sponsors=sponsors)
+                         campaigns=campaigns,
+                         sponsors=sponsors)
 
 
 # ADREQUEST EDIT BUTTON ON ADREQUEST TABLE
-@app.route('/sponsor/adrequest/modify/<id>', methods=['GET', 'POST'])
+@app.route('/sponsor/adrequest/modify/<int:id>', methods=['GET', 'POST'])
 @login_required_sponsor
 def modify_adrequest(id):
   adrequest = AdRequest.query.filter_by(adrequest_id=id).first()
-  sponsor=Sponsor.query.filter_by(sponsor_id=adrequest.campaign.sponsor_id).first()
-  negotiations=Negotiation.query.filter_by(adrequest_id=id).first()
-  campaigns=Campaign.query.filter_by(campaign_id=adrequest.campaign_id).first()
-  budget_spent=0
+  influencers = Influencer.query.filter_by(status="ACTIVE").all()
+  sponsor = Sponsor.query.filter_by(
+      sponsor_id=adrequest.campaign.sponsor_id).first()
+  negotiations = Negotiation.query.filter_by(adrequest_id=id).first()
+  campaigns = Campaign.query.filter_by(
+      campaign_id=adrequest.campaign_id).first()
+  budget_spent = 0
   for adrequest in campaigns.adrequests:
-    budget_spent+=adrequest.payment_amount
+    budget_spent += adrequest.payment_amount
   if request.method == 'POST':
-    adrequest_id = request.form.get('adrequest_id')
     message = request.form.get('message')
     requirements = request.form.get('requirements')
     payment_amount = request.form.get('payment_amount')
-    negotiation = request.form.get('negotiation')
+
+    influencer_id = request.form.get('influencer_id')
     adrequest.message = message
     adrequest.requirements = requirements
     adrequest.payment_amount = payment_amount
+    adrequest.influencer_id = influencer_id
 
     db.session.commit()
     return redirect(url_for('show_campaign'))
   return render_template('/sponsor/adrequest_modify_form.html',
-                         adrequests=adrequest,sponsor=sponsor,budget_spent=budget_spent)
+                         adrequests=adrequest,
+                         sponsor=sponsor,
+                         budget_spent=budget_spent,
+                         influencers=influencers)
 
 
 #SEND BUTTON ON PRIVATE ADREQUESTS
@@ -393,7 +413,7 @@ def send_request(id):
     adrequests.influencer_id = influencer_id
     db.session.commit()
     return redirect(url_for('show_campaign'))
-  influencers = Influencer.query.all()
+  influencers = Influencer.query.filter_by(status="ACTIVE").all()
   adrequests = AdRequest.query.filter_by(adrequest_id=id).first()
   return render_template('/sponsor/send_adrequest.html',
                          adrequests=adrequests,
@@ -417,9 +437,10 @@ def sponsor_campaign_search():
 
     if campaign_search_type == 'name':
       campaigns = Campaign.query.filter(
-        Campaign.name.like("%" + campaign_search + "%")).all()
+          Campaign.name.like("%" + campaign_search + "%")).all()
       if campaigns:
-        return render_template('/sponsor/sponsor_find.html', campaigns=campaigns)
+        return render_template('/sponsor/sponsor_find.html',
+                               campaigns=campaigns)
       else:
         flash('No campaigns found')
     elif campaign_search_type == 'budget':
@@ -428,23 +449,34 @@ def sponsor_campaign_search():
       return render_template('/sponsor/sponsor_find.html', campaigns=campaigns)
     elif campaign_search_type == 'visibility':
       campaigns = Campaign.query.filter(
-        Campaign.visibility.like("%" + campaign_search + "%")).all()
+          Campaign.visibility.like("%" + campaign_search + "%")).all()
       if campaigns:
-        return render_template('/sponsor/sponsor_find.html', campaigns=campaigns)
+        return render_template('/sponsor/sponsor_find.html',
+                               campaigns=campaigns)
       else:
         flash('No campaigns found')
     elif campaign_search_type == 'start_date':
       campaigns = Campaign.query.filter(
-        Campaign.start_date.like("%" + campaign_search + "%")).all()
+          Campaign.start_date.like("%" + campaign_search + "%")).all()
       if campaigns:
-        return render_template('/sponsor/sponsor_find.html', campaigns=campaigns)
+        return render_template('/sponsor/sponsor_find.html',
+                               campaigns=campaigns)
       else:
         flash('No campaigns found')
     elif campaign_search_type == 'end_date':
       campaigns = Campaign.query.filter(
-        Campaign.end_date.like("%" + campaign_search + "%")).all()
+          Campaign.end_date.like("%" + campaign_search + "%")).all()
       if campaigns:
-        return render_template('/sponsor/sponsor_find.html', campaigns=campaigns)
+        return render_template('/sponsor/sponsor_find.html',
+                               campaigns=campaigns)
+      else:
+        flash('No campaigns found')
+    elif campaign_search_type == 'expiry':
+      campaigns = Campaign.query.filter_by(
+          expiry=campaign_search.upper()).all()
+      if campaigns:
+        return render_template('/sponsor/sponsor_find.html',
+                               campaigns=campaigns)
       else:
         flash('No campaigns found')
   return render_template('/sponsor/sponsor_find.html')
@@ -460,30 +492,35 @@ def sponsor_influencer_search():
 
     if influencer_search_type == 'name':
       influencers = Influencer.query.filter(
-        Influencer.influencer_name.like("%" + influencer_search + "%")).all()
+          Influencer.influencer_name.like("%" + influencer_search +
+                                          "%")).all()
       if influencers:
-        return render_template('/sponsor/sponsor_find.html', influencers=influencers)
+        return render_template('/sponsor/sponsor_find.html',
+                               influencers=influencers)
       else:
         flash('No influencers found')
     elif influencer_search_type == 'category':
       influencers = Influencer.query.filter(
-        Influencer.category.like("%" + influencer_search + "%")).all()
+          Influencer.category.like("%" + influencer_search + "%")).all()
       if influencers:
-        return render_template('/sponsor/sponsor_find.html', influencers=influencers)
+        return render_template('/sponsor/sponsor_find.html',
+                               influencers=influencers)
       else:
         flash('No influencers found')
     elif influencer_search_type == 'niche':
       influencers = Influencer.query.filter(
-        Influencer.niche.like("%" + influencer_search + "%")).all()
+          Influencer.niche.like("%" + influencer_search + "%")).all()
       if influencers:
-        return render_template('/sponsor/sponsor_find.html', influencers=influencers)
+        return render_template('/sponsor/sponsor_find.html',
+                               influencers=influencers)
       else:
         flash('No influencers found')
     elif influencer_search_type == 'reach':
       influencers = Influencer.query.filter(
-        Influencer.reach.like("%" + influencer_search + "%")).all()
+          Influencer.reach.like("%" + influencer_search + "%")).all()
       if influencers:
-        return render_template('/sponsor/sponsor_find.html', influencers=influencers)
+        return render_template('/sponsor/sponsor_find.html',
+                               influencers=influencers)
       else:
         flash('No influencers found')
   return render_template('/sponsor/sponsor_find.html')
@@ -499,23 +536,26 @@ def sponsor_adrequest_search():
 
     if adrequest_search_type == 'payment_amount':
       adrequests = AdRequest.query.filter(
-        AdRequest.payment_amount.like("%" + adrequest_search + "%")).all()
+          AdRequest.payment_amount.like("%" + adrequest_search + "%")).all()
       if adrequests:
-        return render_template('/sponsor/sponsor_find.html', adrequests=adrequests)
+        return render_template('/sponsor/sponsor_find.html',
+                               adrequests=adrequests)
       else:
         flash('No adrequests found')
     elif adrequest_search_type == 'message':
       adrequests = AdRequest.query.filter(
           AdRequest.message.like("%" + adrequest_search + "%")).all()
       if adrequests:
-        return render_template('/sponsor/sponsor_find.html', adrequests=adrequests)
+        return render_template('/sponsor/sponsor_find.html',
+                               adrequests=adrequests)
       else:
         flash('No adrequests found')
     elif adrequest_search_type == 'requirements':
       adrequests = AdRequest.query.filter(
           AdRequest.requirements.like("%" + adrequest_search + "%")).all()
       if adrequests:
-        return render_template('/sponsor/sponsor_find.html', adrequests=adrequests)
+        return render_template('/sponsor/sponsor_find.html',
+                               adrequests=adrequests)
       else:
         flash('No adrequests found')
   return render_template('/sponsor/sponsor_find.html')
@@ -582,6 +622,3 @@ def influencerNicheCount():
     data.append(dict)
 
   return jsonify(data)
-
-
-  

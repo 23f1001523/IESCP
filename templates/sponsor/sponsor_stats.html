@@ -3,12 +3,31 @@
 {% block content %}
 
 <div class="row justify-content-center ">
+  <div class='text-center mb-3'>
+   <a type="button" href='/sponsor/dashboard' class="btn btn-danger text-white mt-3">Back</a>
+    </div>
+   <div class="col-md-6" >
+     
+     <div class="card">
+        <div class="card-header">
+           <h3>Campaign Progress</h3>
+        </div>
+        <div class="card-body">
+         <canvas id="myChart" class='mt-5 justify-content-center'></canvas>        
+        </div>
+      </div>
 
-   <div class="col-md-6">
-     <canvas id="myChart" class='mt-5 justify-content-center'></canvas>
    </div>
-  <div class="col-md-4">
-     <canvas id="influencerNiche" class='mt-5 justify-content-center' height='100px'></canvas>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+         <h3>Influencer Niche Chart</h3>
+      </div
+      <div class="card-body">
+         <canvas id="influencerNiche" class='mt-5 justify-content-center' height='100px'>     
+      </div>
+    </div>
+    </canvas>
    </div>
 </div>
 
@@ -38,8 +57,20 @@
             label: '# of Campaign Progress',
             data: values,
             borderWidth: 1,
-            backgroundColor:['rgba(255, 205, 86, 0.7)','rgba(153, 102, 255, 0.7)'],
-            borderColor: [ 'rgba(255, 205, 86, 1)','rgba(153, 102, 255, 1)']
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(255, 205, 86, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 205, 86, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(153, 102, 255, 1)',
+            ]
           }],
         },
         options: {
@@ -93,10 +124,29 @@
             label: '# of Influencer Niche',
             data: values,
             borderWidth: 1,
+            backgroundColor: [
+              'rgba(255, 205, 86, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                
+            ],
+            borderColor: [
+              'rgba(255, 205, 86, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(153, 102, 255, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+               
+            ]
            
           }],
         },
         options: {
+          radius: '85%',
+          aspectRatio: 1.7,
+          responsive: true, 
           plugins: {
               datalabels: {
                   anchor: 'end',

@@ -166,7 +166,7 @@
              <td>{{ influencer.reach }}</td>
              
              <td>{{ influencer.status }}</td>
-              <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
+              <td><a href='/admin/influencer/flag/{{influencer.influencer_id}}' class="btn btn-danger">Change Status</a>
            </tr>
            {% endfor %}
          </table>
@@ -205,7 +205,7 @@
              <td>{{ campaign.visibility }}</td>
               <td>{{ campaign.goals }}</td>
              <td>{{ campaign.status }}</td>
-              <td><a href='/admin/sponsor/flag/{{sponsor.sponsor_id}}' class="btn btn-danger">Change Status</a>
+              <td><a href='/admin/campaign/flag/{{campaign.campaign_id}}' class="btn btn-danger">Change Status</a>
            </tr>
            {% endfor %}
          </table>
@@ -226,8 +226,7 @@
              <th>Requirements</th>
              <th>Payment_Amount</th>
              <th>Status</th>
-             <th>Negotiation</th>
-             <th colspan=2></th>
+            
            </tr>
            </thead>
            {% for adrequest in adrequests %}
@@ -239,15 +238,7 @@
              <td>{{ adrequest.requirements }}</td>
              <td>{{ adrequest.payment_amount }}</td>
              <td>{{ adrequest.status }}</td>
-             <td><form action='/influencer/show/{{adrequest.adrequest_id}}' method='POST'>
-               <div class='input-group'>
-               <input type='text' class='form-control' id='negotiation' name='negotiation' placeholder='Please Enter here'>
-
-               <button type='submit' class='btn btn-danger'>Send Request</button>
-                 </div>
-               </form>
-             </td>
-
+         
            </tr>
            {% endfor %}
          </table>

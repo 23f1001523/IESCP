@@ -4,7 +4,7 @@ from werkzeug.utils import redirect
 
 from models.model import Sponsor, db, Influencer, Admin, Campaign, AdRequest, Negotiation
 from flask import current_app as app
-from controllers.usermanager import *
+from controllers.usermanager import isActive, login_required_influencer, userlogin
 from functools import wraps
 
 fatalerror = "Error Occured. Please contact Administrator"
@@ -52,20 +52,13 @@ def influencer_login():
     influencer = Influencer.query.filter_by(
         influencer_id=influencer_id).first()
     if influencer:
-      if influencer.status == 'ACTIVE':
-        if influencer.influencer_password == influencer_password:
-          userlogin(influencer, "influencer")
-          return redirect(url_for('influencerdashboard'))
-
-        else:
-          flash("Password is wrong")
-          return render_template('login.html')
+      if influencer.influencer_password == influencer_password:
+        userlogin(influencer, "influencer")
+        return redirect(url_for('influencerdashboard'))
       else:
-        flash("You are not allowed to login")
-        return render_template('login.html')
+        flash("Password is wrong")
     else:
       flash("User ID not registered")
-      return render_template('login.html')
   return render_template('login.html')
 
 
@@ -73,10 +66,30 @@ def influencer_login():
 @app.route('/influencer/dashboard')
 @login_required_influencer
 def influencerdashboard():
-  id = session['user_id']
-  adrequests = AdRequest.query.filter_by(influencer_id=id).all()
-  return render_template('/influencer/influencer_dashboard_display.html',
-                         adrequests=adrequests)
+  if isActive():
+    influencer_id = session['user_id']
+    campaigns = Campaign.query.filter_by(visibility='Public',
+                                         status="ACTIVE").all()
+    alladrequests = AdRequest.query.filter_by(
+        influencer_id=influencer_id).all()
+    myadrqeuests = AdRequest.query.filter(
+        AdRequest.influencer_id == influencer_id, AdRequest.status
+        != "PENDING").all()
+    campaigns = Campaign.query.filter_by(visibility='Public',
+                                         status="ACTIVE").all()
+    pvtNotifications = len([
+        adrequest for adrequest in alladrequests
+        if adrequest.campaign.visibility == "Private"
+    ])
+    allPublic = len(campaigns)
+    allAdrequests = len(myadrqeuests)
+    session['pvtNotifications'] = pvtNotifications
+    session['allPublic'] = allPublic
+    session['allAdrequests'] = allAdrequests
+    return render_template('/influencer/influencer_dashboard_display.html',
+                           adrequests=alladrequests)
+  else:
+    return render_template('error.html')
 
 
 @app.route('/influencer/adrequest/negotiation/<id>', methods=['GET', 'POST'])
@@ -86,8 +99,30 @@ def negotiation():
     adrequest_id = request.form.get('adrequest_id')
     negotiation = request.form.get('negotiation')
     adrequest = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
-    adrequest.negotiation = negotiation
+    adrequest.negotiations = negotiation
     db.session.commit()
+
+
+@app.route('/influencer/pvtadrequest/accept/<int:id>')
+def acceptPvtAdrequest(id):
+  influencer_id = session['user_id']
+  adrequest = AdRequest.query.filter_by(adrequest_id=id).first()
+  if adrequest.influencer_id == influencer_id:
+    adrequest.status = 'ACCEPTED'
+    db.session.commit()
+    flash("Adrequest Accepted")
+    return redirect(url_for('influencerdashboard'))
+
+
+@app.route('/influencer/pvtadrequest/reject/<int:id>')
+def rejectPvtAdrequest(id):
+  influencer_id = session['user_id']
+  adrequest = AdRequest.query.filter_by(adrequest_id=id).first()
+  if adrequest.influencer_id == influencer_id:
+    adrequest.status = 'REJECTED'
+    db.session.commit()
+    flash("Adrequest Rejected")
+    return redirect(url_for('influencerdashboard'))
 
 
 #INFLUENCER PROFILE
@@ -109,20 +144,16 @@ def influencer_profile():
             influencer.influencer_password = new_password
             db.session.commit()
             flash("Password Successfully Updated")
-            return render_template('/influencer/influencer_profile.html',
-                                   user_id=user_id)
+
           else:
-            flash("Your Passwords do not match")
-            return render_template('/influencer/influencer_profile.html',
-                                   user_id=user_id)
+            flash("Confirm Passwords do not match")
+
         else:
-          flash("You are not allowed to change password")
-          return render_template('/influencer/influencer_profile.html',
-                                 user_id=user_id)
+          flash("Password entered is incorrect")
+
       else:
         flash("User ID not registered")
-        return render_template('/influencer/influencer_profile.html',
-                               user_id=user_id)
+
     except:
       flash(fatalerror)
   influencer = Influencer.query.filter_by(influencer_id=user_id).first()
@@ -131,55 +162,21 @@ def influencer_profile():
 
 
 #INFLUENCER CHANGE CATEGORY
-@app.route('/influencer/change/category', methods=['GET', 'POST'])
+@app.route('/influencer/updateProfile', methods=['GET', 'POST'])
 @login_required_influencer
 def influencer_change_category():
   if request.method == 'POST':
     category = request.form.get('category')
+    niche = request.form.get('niche')
+    reach = request.form.get('reach')
     influencer = Influencer.query.filter_by(
         influencer_id=session['user_id']).first()
     if influencer:
       influencer.category = category
-      db.session.commit()
-      flash("Category Successfully Updated")
-    else:
-      flash("Influencer ID not registered")
-    influencer = Influencer.query.filter_by(
-        influencer_id=session['user_id']).first()
-    return redirect(url_for('influencer_profile'))
-
-
-#INFLUENCER CHANGE CATEGORY
-@app.route('/influencer/change/niche', methods=['GET', 'POST'])
-@login_required_influencer
-def influencer_change_niche():
-  if request.method == 'POST':
-    category = request.form.get('niche')
-    influencer = Influencer.query.filter_by(
-        influencer_id=session['user_id']).first()
-    if influencer:
       influencer.niche = niche
-      db.session.commit()
-      flash("Niche Successfully Updated")
-    else:
-      flash("Influencer ID not registered")
-    influencer = Influencer.query.filter_by(
-        influencer_id=session['user_id']).first()
-    return redirect(url_for('influencer_profile'))
-
-
-    #INFLUENCER CHANGE CATEGORY
-@app.route('/influencer/change/reach', methods=['GET', 'POST'])
-@login_required_influencer
-def influencer_change_reach():
-  if request.method == 'POST':
-    category = request.form.get('reach')
-    influencer = Influencer.query.filter_by(
-        influencer_id=session['user_id']).first()
-    if influencer:
       influencer.reach = reach
       db.session.commit()
-      flash("Reach Successfully Updated")
+      flash("Profile Update Successfully.")
     else:
       flash("Influencer ID not registered")
     influencer = Influencer.query.filter_by(
@@ -392,3 +389,26 @@ def campaign_budget_chart():
     dict = {"name": adrequest.adrequest_id, "budget": adrequest.payment_amount}
     data.append(dict)
   return data
+
+
+@app.route('/influencer/public/adrequests/show')
+def public_adrequests_show():
+  influencer_id = session['user_id']
+  # adrequests = AdRequest.query.filter_by(influencer_id=influencer_id).all()
+  campaigns = Campaign.query.filter_by(visibility='Public',
+                                       status="ACTIVE").all()
+
+  return render_template('/influencer/public_adrequests.html',
+                         campaigns=campaigns)
+
+
+@app.route('/influencer/adrequests/accepted/show')
+def accepted_adrequests_show():
+  influencer_id = session['user_id']
+
+  myadrqeuests = AdRequest.query.filter(
+      AdRequest.influencer_id == influencer_id, AdRequest.status
+      != "PENDING").all()
+
+  return render_template('/influencer/influencer_adrequest_status.html',
+                         adrequests=myadrqeuests)

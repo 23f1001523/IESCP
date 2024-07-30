@@ -1,8 +1,10 @@
 from flask import Flask, flash, redirect, url_for, session
 from functools import wraps
+from models.model import *
 
 
 def login_required(func):
+
   @wraps(func)
   def wrapper_admin(*args, **kwargs):
     if session.get('loggedin') is None or session['user_type'] != 'admin':
@@ -24,14 +26,18 @@ def login_required_sponsor(func):
 
   return wrapper_sponsor
 
+
 def login_required_influencer(func):
+
   @wraps(func)
   def wrapper_influencer(*args, **kwargs):
-    if session.get('loggedin') is None or session['user_type']!='influencer':
+    if session.get('loggedin') is None or session['user_type'] != 'influencer':
       flash('You need to login first')
       return redirect(url_for('login'))
-    return func(*args, **kwargs) 
+    return func(*args, **kwargs)
+
   return wrapper_influencer
+
 
 def userlogin(user, user_type):
   session['loggedin'] = True
@@ -53,3 +59,17 @@ def userlogout():
   session.pop('user_name', None)
   session.pop('user_type', None)
   return redirect(url_for('login'))
+
+
+def isActive():
+  user_id = session['user_id']
+  user_type = session['user_type']
+  if user_type == 'sponsor':
+    sponsor = Sponsor.query.filter_by(sponsor_id=user_id).first()
+    if sponsor and sponsor.status == "ACTIVE":
+      return True
+  elif user_type == "influencer":
+    influencer = Influencer.query.filter_by(influencer_id=user_id).first()
+    if influencer and influencer.status == "ACTIVE":
+      return True
+  return False
