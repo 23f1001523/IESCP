@@ -59,13 +59,4 @@
 ---
 
 ### 🌟 You are all set!
-Key Markdown Formatting Elements:
-Headings: Use # for headings. More # symbols indicate smaller headings.
-# for main heading
-## for subheadings
-### for smaller subheadings
-Code Blocks: Use triple backticks (```) to denote code blocks.
-Inline Code: Use single backticks () for inline code, e.g., pip install -r requirements.txt`.
-Lists: Use - or * for bullet points.
-Bold Text: Wrap text in ** to make it bold.
-Horizontal Line: Use --- for a horizontal line.
+##Thank You ❤️
